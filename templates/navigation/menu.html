@@ -1,0 +1,21 @@
+{% if links %}
+<ul class="menu" role="list">
+    {% for link in links %}
+    <li class="menu__item{% if link.children %} menu__item--has-children{% endif %}{% if link.is_active %} is-active{% endif %}">
+        <a class="menu__link" href="{{ link.url }}"{% if link.aria_current %} aria-current="{{ link.aria_current }}"{% endif %}{% if link.open_in_new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.title }}</a>
+        {% if link.children %}
+        <button class="submenu-toggle" type="button" aria-expanded="false" aria-controls="submenu-{{ menu_slug }}-{{ forloop.counter }}">
+            <span class="visually-hidden">Show {{ link.title }} submenu</span>
+        </button>
+        <ul class="submenu" id="submenu-{{ menu_slug }}-{{ forloop.counter }}" role="list">
+            {% for child in link.children %}
+            <li class="submenu__item{% if child.is_active %} is-active{% endif %}">
+                <a class="submenu__link" href="{{ child.url }}"{% if child.aria_current %} aria-current="{{ child.aria_current }}"{% endif %}{% if child.open_in_new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ child.title }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}

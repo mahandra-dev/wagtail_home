@@ -1,0 +1,7 @@
+{% load wagtailcore_tags %}<p class="block-cta">
+    {% if value.page %}
+    <a class="button button--primary" href="{% pageurl value.page %}">{{ value.text }}</a>
+    {% elif value.url %}
+    <a class="button button--primary" href="{{ value.url }}" rel="noopener">{{ value.text }}</a>
+    {% endif %}
+</p>

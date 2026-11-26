@@ -1,0 +1,71 @@
+[project]
+name = "wagtail-home"
+version = "0.1.0"
+description = "Wagtail 7.4 LTS site on PostgreSQL with admin-editable menus"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=5.2,<5.3",
+    "django-environ>=0.12",
+    "gunicorn>=23",
+    "psycopg[binary]>=3.2",
+    "wagtail>=7.4,<7.5",
+    "whitenoise>=6.8",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+    "pytest-django>=4.14.0",
+    "ruff>=0.17.6",
+]
+
+[tool.uv]
+# This is an application, not a library: don't build/install it as a package.
+package = false
+
+# ---------------------------------------------------------------- ruff
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["*/migrations/*"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "B",        # bugbear
+    "UP",       # pyupgrade
+    "DJ",       # flake8-django
+    "SIM",      # simplify
+    "C4",       # comprehensions
+    "RUF",      # ruff-specific
+]
+ignore = [
+    "RUF012",   # Wagtail/Django class attributes (panels, search_fields) are mutable by design
+    "RUF005",   # `Page.content_panels + [...]` is the idiomatic Wagtail pattern
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["config", "core", "home", "navigation"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+# ---------------------------------------------------------------- pytest
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.dev"
+python_files = ["test_*.py"]
+testpaths = ["tests"]
+addopts = "--reuse-db --strict-markers -ra"
+filterwarnings = ["ignore::DeprecationWarning:taggit.*"]
+
+# ---------------------------------------------------------------- coverage
+[tool.coverage.run]
+source = ["config", "core", "home", "navigation"]
+omit = ["*/migrations/*", "config/asgi.py", "config/wsgi.py"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true

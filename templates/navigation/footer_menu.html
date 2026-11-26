@@ -1,0 +1,10 @@
+{% if links %}
+<ul class="footer-menu" role="list">
+    {% for link in links %}
+    <li><a href="{{ link.url }}"{% if link.aria_current %} aria-current="{{ link.aria_current }}"{% endif %}{% if link.open_in_new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ link.title }}</a></li>
+    {% for child in link.children %}
+    <li><a href="{{ child.url }}"{% if child.aria_current %} aria-current="{{ child.aria_current }}"{% endif %}{% if child.open_in_new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ child.title }}</a></li>
+    {% endfor %}
+    {% endfor %}
+</ul>
+{% endif %}

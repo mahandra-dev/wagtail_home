@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-contactpage-landing{% endblock %}
+
+{% block content %}
+<article class="container page">
+    <h1>Thank you</h1>
+    {% if page.thank_you_text %}
+        <div class="page__intro">{{ page.thank_you_text|richtext }}</div>
+    {% else %}
+        <p>Your message has been sent.</p>
+    {% endif %}
+    <p><a href="{% pageurl page %}">Send another message</a></p>
+</article>
+{% endblock %}

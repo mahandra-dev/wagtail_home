@@ -1,0 +1,4 @@
+{% load wagtailimages_tags %}<figure class="block-image">
+    {% image value.image max-1200x800 alt=value.alt_text|default:value.image.title loading="lazy" %}
+    {% if value.caption %}<figcaption>{{ value.caption }}</figcaption>{% endif %}
+</figure>

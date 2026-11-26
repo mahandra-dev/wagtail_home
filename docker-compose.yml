@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-wagtail}
+      POSTGRES_USER: ${POSTGRES_USER:-wagtail}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-wagtail}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.dev
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-change-me-dev-only-insecure-key}
+      DJANGO_DEBUG: "True"
+      DJANGO_ALLOWED_HOSTS: "*"
+      DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost:${WEB_PORT:-8000}
+      DATABASE_URL: postgres://${POSTGRES_USER:-wagtail}:${POSTGRES_PASSWORD:-wagtail}@db:5432/${POSTGRES_DB:-wagtail}
+      EMAIL_URL: ${EMAIL_URL:-consolemail://}
+      WAGTAILADMIN_BASE_URL: http://localhost:${WEB_PORT:-8000}
+    command: >
+      sh -c "uv run --frozen --no-sync python manage.py migrate --noinput &&
+             uv run --frozen --no-sync python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+    volumes:
+      - .:/app
+      - media:/app/media
+
+volumes:
+  pgdata:
+  media:

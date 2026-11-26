@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}template-homepage{% endblock %}
+
+{% block content %}
+<section class="hero{% if page.hero_image %} hero--image{% endif %}" aria-labelledby="hero-title">
+    {% if page.hero_image %}
+        {% image page.hero_image fill-1600x600 class="hero__image" alt="" loading="eager" %}
+    {% endif %}
+    <div class="container hero__content">
+        <h1 id="hero-title" class="hero__title">{{ page.hero_title|default:page.title }}</h1>
+        {% if page.hero_subtitle %}<p class="hero__subtitle">{{ page.hero_subtitle }}</p>{% endif %}
+        {% if page.hero_cta_text and page.hero_cta_href %}
+            <a class="button button--primary" href="{{ page.hero_cta_href }}">{{ page.hero_cta_text }}</a>
+        {% endif %}
+    </div>
+</section>
+
+{% if page.body %}
+<div class="container stream">
+    {% for block in page.body %}{% include_block block %}{% endfor %}
+</div>
+{% endif %}
+{% endblock %}
